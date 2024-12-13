@@ -2,7 +2,7 @@ import sys
 import psutil
 import io
 from PIL import Image
-from binariesLib import BinaryReader
+from Lib.binariesLib import BinaryReader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage
 from UI.BD import Ui_MainWindow
@@ -339,7 +339,7 @@ class myWindow(QMainWindow):
             rgba_colors = [(r, g, b, a) for count, (r, g, b, a) in colors]
             rgba_colors = sorted(rgba_colors)
             print(len(rgba_colors))
-            
+
             if len(rgba_colors) > 256:
                 self.ui.statusBar.showMessage(f"Operation Failed. The size of the palette is {len(rgba_colors)}.", 3000)
                 return
