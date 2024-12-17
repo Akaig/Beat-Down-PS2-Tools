@@ -128,16 +128,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="section_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Export Section</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="patchImage_button">
             <property name="enabled">
              <bool>false</bool>
@@ -152,16 +142,12 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="special_button">
-            <property name="text">
-             <string>Special Extraction</string>
+           <widget class="QPushButton" name="section_button">
+            <property name="enabled">
+             <bool>false</bool>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="folder_button">
             <property name="text">
-             <string>Filter From Folder</string>
+             <string>Export File</string>
             </property>
            </widget>
           </item>
@@ -171,7 +157,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Patch Section</string>
+             <string>Patch File</string>
             </property>
            </widget>
           </item>
@@ -180,7 +166,7 @@
         <item>
          <widget class="QPushButton" name="export_list">
           <property name="text">
-           <string>Export List</string>
+           <string>Export All</string>
           </property>
          </widget>
         </item>

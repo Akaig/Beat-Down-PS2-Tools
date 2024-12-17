@@ -1,6 +1,7 @@
 import sys
 import psutil
 import io
+import os
 from PIL import Image
 from Lib.binariesLib import BinaryReader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QFileDialog
@@ -43,8 +44,6 @@ class myWindow(QMainWindow):
         self.ui.export_button.clicked.connect(self.save_texture)
         self.ui.patchImage_button.clicked.connect(self.patch_image)
         self.ui.patchSection_button.clicked.connect(self.patch_section)
-        self.ui.special_button.clicked.connect(self.multi_extract)
-        self.ui.folder_button.clicked.connect(self.filter_from_folder)
         self.ui.export_list.clicked.connect(self.bulk_export)
 
         # Table Connects
@@ -55,6 +54,14 @@ class myWindow(QMainWindow):
         self.filter_timer = QTimer()
         self.filter_timer.setSingleShot(True)
         self.filter_timer.timeout.connect(self.filter_table)
+
+        self.create_folder()
+
+    def create_folder(self):
+        try:
+            os.makedirs("Export", exist_ok=True)
+        except Exception as e:
+            print(f"Error creating folder: {e}")
 
     def start_filter_timer(self):
         self.filter_timer.start(300)  
@@ -364,62 +371,25 @@ class myWindow(QMainWindow):
         
 
     def filter_table(self):
-        # Get the filter text from the input box
+        # Get the filter list from the input box
         filter_list = [x.lower() for x in self.ui.filter_input.text().split(",")]
         # Show only rows that contain the filter text
         for row in range(self.ui.offsets_table.rowCount()):
             item = self.ui.offsets_table.item(row, 1)
+            # Show result if filter list has any True value
             row_matches_any = any(filter_item in item.text().lower() for filter_item in filter_list)
             if row_matches_any:
                 self.ui.offsets_table.setRowHidden(row, False)
+                # Check what item returned True
                 for filter_item in filter_list:
                     if filter_item.split("--")[-1] in item.text().lower():
+                        # If negative filter is found, hide result
                         if '--' in filter_item:
                             self.ui.offsets_table.setRowHidden(row, True)
-                self.bulk_extract.append([self.ui.offsets_table.item(row, 1).text().split("\\")[-1], int(self.ui.offsets_table.item(row, 0).text()[2:], 16), int(self.ui.offsets_table.item(row, 2).text())])
-            else:
-                self.ui.offsets_table.setRowHidden(row, True)
-
-    def multi_extract(self):
-        def closest(lst, K):
-            current = 0
-            for o in lst:
-                if K > o:
-                    current = o
-                elif K < o:
-                    return current
-     
-        offsets = []
-        closests = []
-        with open("Output/raw.txt", "r") as f:
-            for l in f:
-                offsets.append(int(l.split("\t")[0][2:], 16))
-
-        for o in offsets:
-            result = closest(self.offsets, o)
-            closests.append(hex(result))
-        
-        for row in range(self.ui.offsets_table.rowCount()):
-            item = self.ui.offsets_table.item(row, 0)
-            if item.text().lower() in closests:
-                self.ui.offsets_table.setRowHidden(row, False)
-            else:
-                self.ui.offsets_table.setRowHidden(row, True)
-
-    def filter_from_folder(self):
-        import os
-
-        path = self.ui.lineEdit.text()
-        files = os.listdir(os.path.abspath(path))
-
-        for row in range(self.ui.offsets_table.rowCount()):
-            item = self.ui.offsets_table.item(row, 1)
-            if item.text() in files:
-                self.ui.offsets_table.setRowHidden(row, False)
+                # self.bulk_extract.append([self.ui.offsets_table.item(row, 1).text().split("\\")[-1], int(self.ui.offsets_table.item(row, 0).text()[2:], 16), int(self.ui.offsets_table.item(row, 2).text())])
             else:
                 self.ui.offsets_table.setRowHidden(row, True)
         
-
     def bulk_export(self):
         for o in self.bulk_extract:
             self.export_section(o[0],o[1],o[2])
