@@ -365,13 +365,17 @@ class myWindow(QMainWindow):
 
     def filter_table(self):
         # Get the filter text from the input box
-        filter_text = self.ui.filter_input.text()
-        self.bulk_extract = []
+        filter_list = [x.lower() for x in self.ui.filter_input.text().split(",")]
         # Show only rows that contain the filter text
         for row in range(self.ui.offsets_table.rowCount()):
             item = self.ui.offsets_table.item(row, 1)
-            if filter_text.lower() in item.text().lower():
+            row_matches_any = any(filter_item in item.text().lower() for filter_item in filter_list)
+            if row_matches_any:
                 self.ui.offsets_table.setRowHidden(row, False)
+                for filter_item in filter_list:
+                    if filter_item.split("--")[-1] in item.text().lower():
+                        if '--' in filter_item:
+                            self.ui.offsets_table.setRowHidden(row, True)
                 self.bulk_extract.append([self.ui.offsets_table.item(row, 1).text().split("\\")[-1], int(self.ui.offsets_table.item(row, 0).text()[2:], 16), int(self.ui.offsets_table.item(row, 2).text())])
             else:
                 self.ui.offsets_table.setRowHidden(row, True)
